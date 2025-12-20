@@ -363,6 +363,9 @@ class EvaluatorConfig:
     enable_artifacts: bool = True
     max_artifact_storage: int = 100 * 1024 * 1024  # 100MB per program
 
+    # Additional arguments
+    problem_dir: os.PathLike = None
+
 
 @dataclass
 class EvolutionTraceConfig:

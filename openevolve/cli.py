@@ -25,6 +25,8 @@ def parse_args() -> argparse.Namespace:
         "evaluation_file", help="Path to the evaluation file containing an 'evaluate' function"
     )
 
+    parser.add_argument("--problem", "-p", help="Path to problem task directory", default=None)
+
     parser.add_argument("--config", "-c", help="Path to configuration file (YAML)", default=None)
 
     parser.add_argument("--output", "-o", help="Output directory for results", default=None)
@@ -102,6 +104,8 @@ async def main_async() -> int:
             print(f"Applied CLI model overrides - active models:")
             for i, model in enumerate(config.llm.models):
                 print(f"  Model {i+1}: {model.name} (weight: {model.weight})")
+
+    config.evaluator.problem_dir = args.problem
 
     # Initialize OpenEvolve
     try:

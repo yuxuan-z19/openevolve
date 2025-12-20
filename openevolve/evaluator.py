@@ -15,15 +15,13 @@ import traceback
 import uuid
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-import traceback
 
 from openevolve.config import EvaluatorConfig
 from openevolve.database import ProgramDatabase
 from openevolve.evaluation_result import EvaluationResult
-from openevolve.database import ProgramDatabase
 from openevolve.llm.ensemble import LLMEnsemble
-from openevolve.utils.async_utils import TaskPool, run_in_executor
 from openevolve.prompt.sampler import PromptSampler
+from openevolve.utils.async_utils import TaskPool, run_in_executor
 from openevolve.utils.format_utils import format_metrics_safe
 
 logger = logging.getLogger(__name__)
@@ -348,7 +346,10 @@ class Evaluator:
         # Create a coroutine that runs the evaluation function in an executor
         async def run_evaluation():
             loop = asyncio.get_event_loop()
-            return await loop.run_in_executor(None, self.evaluate_function, program_path)
+            args = [program_path]
+            if self.config.problem_dir:
+                args.append(self.config.problem_dir)
+            return await loop.run_in_executor(None, self.evaluate_function, *args)
 
         # Run the evaluation with timeout - let exceptions bubble up for retry handling
         result = await asyncio.wait_for(run_evaluation(), timeout=self.config.timeout)
