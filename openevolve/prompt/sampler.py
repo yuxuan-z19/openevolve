@@ -6,6 +6,8 @@ import logging
 import random
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+from cudanalyst.helper.ckpt import drain_plans
+
 from openevolve.config import PromptConfig
 from openevolve.prompt.templates import TemplateManager
 from openevolve.utils.format_utils import format_metrics_safe
@@ -107,6 +109,8 @@ class PromptSampler:
             if system_message in self.template_manager.templates:
                 system_message = self.template_manager.get_template(system_message)
 
+        program_metrics, program_artifacts = drain_plans(program_metrics)
+
         # Format metrics
         metrics_str = self._format_metrics(program_metrics)
 
@@ -158,6 +162,7 @@ class PromptSampler:
         # Use safe formatting to handle mixed numeric and string values
         formatted_parts = []
         for name, value in metrics.items():
+            if name == "reports": continue
             if isinstance(value, (int, float)):
                 try:
                     formatted_parts.append(f"- {name}: {value:.4f}")
@@ -252,6 +257,7 @@ class PromptSampler:
             # Format performance metrics using safe formatting
             performance_parts = []
             for name, value in program.get("metrics", {}).items():
+                if name == "reports": continue
                 if isinstance(value, (int, float)):
                     try:
                         performance_parts.append(f"{name}: {value:.4f}")
@@ -320,6 +326,7 @@ class PromptSampler:
             if not key_features:
                 key_features = []
                 for name, value in program.get("metrics", {}).items():
+                    if name == "reports": continue
                     if isinstance(value, (int, float)):
                         try:
                             key_features.append(self.template_manager.get_fragment("top_program_metrics_prefix") + f" {name} ({value:.4f})")
@@ -582,13 +589,15 @@ class PromptSampler:
         for key, value in artifacts.items():
             content = self._safe_decode_artifact(value)
             # Truncate if too long
-            if len(content) > self.config.max_artifact_bytes:
-                content = content[: self.config.max_artifact_bytes] + "\n... (truncated)"
+            # if len(content) > self.config.max_artifact_bytes:
+                # content = content[: self.config.max_artifact_bytes] + "\n... (truncated)"
 
-            sections.append(f"### {key}\n```\n{content}\n```")
+            # sections.append(f"### {key}\n```\n{content}\n```")
+            sections.append(f"## {key}\n {content}\n")
 
         if sections:
-            return "## " + self.template_manager.get_fragment("artifact_title") + "\n\n" + "\n\n".join(sections)
+            # return "## " + self.template_manager.get_fragment("artifact_title") + "\n\n" + "\n\n".join(sections)
+            return "# " + self.template_manager.get_fragment("plan_decision_title") + "\n\n" + "\n\n".join(sections)
         else:
             return ""
 

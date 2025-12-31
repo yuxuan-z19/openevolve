@@ -17,6 +17,7 @@
   "default_improvement": "Focus on improving the fitness score while exploring diverse solutions",
   "no_feature_coordinates": "No feature coordinates",
   "artifact_title": "Last Execution Output",
+  "plan_decision_title": "Plan Decisions",
   "diverse_programs_title": "Diverse Programs",
   "attempt_unknown_changes": "Unknown changes",
   "attempt_all_metrics_improved": "Improvement in all metrics",
