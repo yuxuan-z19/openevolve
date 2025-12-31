@@ -349,6 +349,8 @@ class Evaluator:
             args = [program_path]
             if self.config.problem_dir:
                 args.append(self.config.problem_dir)
+            if self.config.analyst_config:
+                args.append(self.config.analyst_config)
             return await loop.run_in_executor(None, self.evaluate_function, *args)
 
         # Run the evaluation with timeout - let exceptions bubble up for retry handling

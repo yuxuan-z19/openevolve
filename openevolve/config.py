@@ -365,6 +365,7 @@ class EvaluatorConfig:
 
     # Additional arguments
     problem_dir: os.PathLike = None
+    analyst_config: os.PathLike = None
 
 
 @dataclass

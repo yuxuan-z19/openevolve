@@ -10,7 +10,7 @@ import sys
 from typing import Dict, List, Optional
 
 from openevolve import OpenEvolve
-from openevolve.config import Config, load_config
+from openevolve.config import load_config
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,7 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument("--problem", "-p", help="Path to problem task directory", default=None)
+    parser.add_argument("--analyst-config", "-a", help="Path to CUDAnalyst config", default=None)
 
     parser.add_argument("--config", "-c", help="Path to configuration file (YAML)", default=None)
 
@@ -106,6 +107,7 @@ async def main_async() -> int:
                 print(f"  Model {i+1}: {model.name} (weight: {model.weight})")
 
     config.evaluator.problem_dir = args.problem
+    config.evaluator.analyst_config = args.analyst_config
 
     # Initialize OpenEvolve
     try:
