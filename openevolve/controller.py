@@ -25,34 +25,6 @@ from openevolve.utils.format_utils import format_improvement_safe, format_metric
 logger = logging.getLogger(__name__)
 
 
-def _format_metrics(metrics: Dict[str, Any]) -> str:
-    """Safely format metrics, handling both numeric and string values"""
-    formatted_parts = []
-    for name, value in metrics.items():
-        if isinstance(value, (int, float)) and not isinstance(value, bool):
-            try:
-                formatted_parts.append(f"{name}={value:.4f}")
-            except (ValueError, TypeError):
-                formatted_parts.append(f"{name}={value}")
-        else:
-            formatted_parts.append(f"{name}={value}")
-    return ", ".join(formatted_parts)
-
-
-def _format_improvement(improvement: Dict[str, Any]) -> str:
-    """Safely format improvement metrics"""
-    formatted_parts = []
-    for name, diff in improvement.items():
-        if isinstance(diff, (int, float)) and not isinstance(diff, bool):
-            try:
-                formatted_parts.append(f"{name}={diff:+.4f}")
-            except (ValueError, TypeError):
-                formatted_parts.append(f"{name}={diff}")
-        else:
-            formatted_parts.append(f"{name}={diff}")
-    return ", ".join(formatted_parts)
-
-
 class OpenEvolve:
     """
     Main controller for OpenEvolve
@@ -268,7 +240,6 @@ class OpenEvolve:
             Best program found
         """
         max_iterations = iterations or self.config.max_iterations
-
         # Determine starting iteration
         start_iteration = 0
         if checkpoint_path and os.path.exists(checkpoint_path):
